@@ -1,7 +1,13 @@
 # Spotify Playlist Puller
 
-## 1.0 Release Notice
-Version 1.0 of the Spotify Playlist Puller is fully operational and is currently made to copy the artist, song title, and album title from every song in a playlist copy of liked songs specifically titled "Liked Songs Copy". Future releases will contain the potential to gather all songs from all playlists. See the following sections below for getting started and using the tool!
+## 1.1 Release Notice
+Version 1.1 of the Spotify Playlist Puller is fully up and running! Now you can choose to only gather your liked songs copy playlist or gather all songs from each playlist.  
+
+To gather all songs run the script with the "all" argument like so:  
+```node script.js all```
+
+To gather only songs from the "Liked Songs Copy" playlist, use "liked" as the argument to script.js like so:  
+```node script.js liked```
 
 ## Required Software
 
@@ -49,7 +55,8 @@ Open the project directory in terminal
 Run the following command to install dependencies:  
 ```npm i```
 
-Run the following command to run the script:  
-```node script.js```
+Run the following command with the applicable subcommand to run the script:  
+```node script.js all``` - (To gather all songs from all playlists)  
+```node script.js liked``` - (To gather all liked songs from copy playlist "Liked Songs Copy")
 
-Check the project directory for a CSV file containing your collected song info, it should be called "liked-songs.csv"
+Check the project directory for a CSV file containing your collected song info, it should be called "liked-songs.csv" when gathering "Liked Songs Copy" and "playlist-songs.csv" when gathering all songs from all playlists.

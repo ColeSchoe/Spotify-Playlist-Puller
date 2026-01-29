@@ -57,9 +57,8 @@ async function getLikedSongs() {
     // api only allows 100 records to be extracted at a time
     while (offset < total)
     {
-        console.log(limit);
         if (limit < 100) {
-            console.log("Final batch");
+            console.log("Final batch for liked songs");
         }
         
         const tracks = await getPlaylistTracks(likedSongsID, offset, limit);
@@ -117,27 +116,49 @@ async function getLikedSongsPlaylist() {
 // Get playlist, songname, artist, album name for all playlists
 async function getAllPlaylistSongs() {
     const retrievedPlaylists = await getPlaylists();
+
+    // Go through all playlists
     for (let index = 0; index < retrievedPlaylists.total; index++) {
-        const element = retrievedPlaylists.items[index];
-        const tracks = await getPlaylistTracks(element.id)
-        console.log(element.name);
-        for (let j = 0; j < tracks.total; j++) {
-            const track = tracks.items[j];
-            const playlistName = element.name;
+        let offset = 0;
+        let limit = 100;
+        const playlist = retrievedPlaylists.items[index];
+        const tracks = await getPlaylistTracks(playlist.id, offset);
 
-            let artistName = "";
-            try {
-                artistName = track.track.artists[0].name;
-            }
-            catch (err) {
-                continue; // Bad track, skip record
-            }
-            
-            const trackName = track.track.name;
-            const albumName = track.track.album.name;
+        const total = tracks.total;
 
-            console.log(playlistName, artistName, trackName, albumName);
-            data.push([playlistName, artistName, trackName, albumName]);
+        console.log("Starting ", playlist.name);
+
+        while (offset < total) {
+            if (limit < 100) {
+                console.log("Final batch for ", playlist.name);
+            }
+
+            const tracks = await getPlaylistTracks(playlist.id, offset, limit);
+
+            for (let j = 0; j < tracks.total; j++) {
+                const track = tracks.items[j];
+                const playlistName = playlist.name;
+
+                let artistName = "";
+                try {
+                    artistName = track.track.artists[0].name;
+                }
+                catch (err) {
+                    continue; // Bad track, skip record
+                }
+                
+                const trackName = track.track.name;
+                const albumName = track.track.album.name;
+
+                console.log(playlistName, artistName, trackName, albumName);
+                data.push([playlistName, artistName, trackName, albumName]);
+            }
+
+            offset += 100;
+
+            if (total - offset < 100) {
+                limit = total - offset;
+            }
         }
     }
 
@@ -157,6 +178,18 @@ async function getAllPlaylistSongs() {
 
 console.log("Node project is running!");
 
-await getLikedSongs();
-// await getAllPlaylistSongs();
+const argument = process.argv[2];
 
+if (argument == "liked"){
+    console.log("Gathering all liked songs");
+    // await getLikedSongs();
+}
+
+else if (argument == "all"){
+    console.log("Gathering all songs for all playlists");
+    // await getAllPlaylistSongs();
+}
+
+else {
+    console.log("Invalid argument...\nTo gather all songs, use subcommand \"all\"\nTo gather liked songs copy, use subcommand \"liked\"");
+}
