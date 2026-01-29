@@ -48,7 +48,7 @@ Create a text file called .env in the project directory, then open this file in 
 Create a variable called token like so:  
 ```TOKEN=```  
 
-Now paste the copied token value directly after the "="  
+Now paste the copied token value directly after the "=". NOTE: This token is only valid for 1 hour, you will have to grab this token again after an hour.  
 
 Open the project directory in terminal
 
