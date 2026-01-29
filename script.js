@@ -182,12 +182,12 @@ const argument = process.argv[2];
 
 if (argument == "liked"){
     console.log("Gathering all liked songs");
-    // await getLikedSongs();
+    await getLikedSongs();
 }
 
 else if (argument == "all"){
     console.log("Gathering all songs for all playlists");
-    // await getAllPlaylistSongs();
+    await getAllPlaylistSongs();
 }
 
 else {
