@@ -48,7 +48,8 @@ Create a text file called .env in the project directory, then open this file in 
 Create a variable called token like so:  
 ```TOKEN=```  
 
-Now paste the copied token value directly after the "=". NOTE: This token is only valid for 1 hour, you will have to grab this token again after an hour.  
+Now paste the copied token value directly after the "="  
+&emsp;NOTE: This token is only valid for 1 hour, you will have to grab this token again after an hour
 
 Open the project directory in terminal
 
@@ -59,4 +60,4 @@ Run the following command with the applicable subcommand to run the script:
 ```node script.js all``` - (To gather all songs from all playlists)  
 ```node script.js liked``` - (To gather all liked songs from copy playlist "Liked Songs Copy")
 
-Check the project directory for a CSV file containing your collected song info, it should be called "liked-songs.csv" when gathering "Liked Songs Copy" and "playlist-songs.csv" when gathering all songs from all playlists.
+Check the project directory for a CSV file containing your collected song info, it should be called "liked-songs.csv" when gathering "Liked Songs Copy" and "playlist-songs.csv" when gathering all songs from all playlists
