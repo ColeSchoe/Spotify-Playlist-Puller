@@ -21,7 +21,7 @@ Use the .msi installer, default options should work
 
 ## Convert Your Liked Songs into a Playlist
 
-In the desktop client for Spotify, go to your liked songs.  
+In the desktop client for Spotify, go to your liked songs  
 
 Ctrl + A -> right click -> "Add to Playlist" -> create a new playlist called "Liked Songs Copy"
 
@@ -37,12 +37,12 @@ Click the "See it in action" button or scroll down
 
 Copy the value after ```const token =``` on line 2 (with quotations)
 
-Create a text file called .env in the project directory, then open this file in notepad.
+Create a text file called .env in the project directory, then open this file in notepad
 
 Create a variable called token like so:  
 ```TOKEN=```  
 
-And paste the token value after this  
+Now paste the copied token value directly after the "="  
 
 Open the project directory in terminal
 
