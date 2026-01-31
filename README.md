@@ -33,6 +33,8 @@ Ctrl + A -> right click -> "Add to Playlist" -> create a new playlist called "Li
 
 ## How to Use
 
+### Getting Your Access Token
+
 Download software package from GitHub
 
 Go to https://developer.spotify.com/
@@ -43,13 +45,12 @@ Click the "See it in action" button or scroll down
 
 Copy the value after ```const token =``` on line 2 (with quotations)
 
-Create a text file called .env in the project directory, then open this file in notepad
-
-Create a variable called token like so:  
-```TOKEN=```  
+In the project directory, open .env with notepad
 
 Now paste the copied token value directly after the "="  
 &emsp;NOTE: This token is only valid for 1 hour, you will have to grab this token again after an hour
+
+### Running the Script
 
 Open the project directory in terminal
 
