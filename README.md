@@ -1,7 +1,15 @@
 # Spotify Playlist Puller
 
-## 1.1 Release Notice
-Version 1.1 of the Spotify Playlist Puller is fully up and running! Now you can choose to only gather your liked songs copy playlist or gather all songs from each playlist.  
+## 1.2 Release Notice
+Version 1.2 of the Spotify Playlist Puller is fully up and running! Now you can choose to only gather your liked songs copy playlist or gather all songs from each playlist. The tool now gathers each of the following datapoints:  
+
+<ul>
+<li>Playlist Name</li>
+<li>Song Name</li>
+<li>Artist</li>
+<li>Album Name</li>
+<li>Time Added to Playlist</li>
+</ul>
 
 To gather all songs run the script with the "all" argument like so:  
 ```node script.js all```
