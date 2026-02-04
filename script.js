@@ -12,8 +12,11 @@ let columns = {
     playlist: "playlist",
     song_name: "song name",
     artist: "artist",
-    album_name: "album name"
+    album_name: "album name",
+    added_at: "added at"
 }
+
+// ---- Functions handling web requests ----
 
 async function fetchWebApi(endpoint, method, body) {
   const res = await fetch(`https://api.spotify.com/${endpoint}`, {
@@ -40,6 +43,22 @@ async function getPlaylistTracks(playlistID, offset=0, limit=100){
     return (fetchWebApi(
         `v1/playlists/${playlistID}/tracks?offset=${offset}&limit=${limit}`, 'GET'
     ));  
+}
+
+// ---- Functions handling core logic ----
+
+// Given all playlists find and return the liked songs playlist, linear search
+async function getLikedSongsPlaylist() {
+    const retrievedPlaylists = await getPlaylists();
+    for (let i = 0; i < retrievedPlaylists.total; i++) {
+        const playlist = retrievedPlaylists.items[i];
+        console.log(playlist.name);
+        if (playlist.name === "Liked Songs Copy") {
+            return playlist.id;
+        }
+    }
+
+    return "err";
 }
 
 // Save liked songs
@@ -76,9 +95,10 @@ async function getLikedSongs() {
             
             const trackName = track.track.name;
             const albumName = track.track.album.name;
+            const addedAtTime = track.added_at;
 
-            console.log(playlistName, artistName, trackName, albumName);
-            data.push([playlistName, artistName, trackName, albumName]);
+            console.log(playlistName, artistName, trackName, albumName, addedAtTime);
+            data.push([playlistName, artistName, trackName, albumName, addedAtTime]);
         }
 
         offset += 100;
@@ -97,20 +117,6 @@ async function getLikedSongs() {
             console.log('liked-songs.csv saved.');
         });
     });
-}
-
-// Given all playlists find and return the liked songs playlist
-async function getLikedSongsPlaylist() {
-    const retrievedPlaylists = await getPlaylists();
-    for (let i = 0; i < retrievedPlaylists.total; i++) {
-        const playlist = retrievedPlaylists.items[i];
-        console.log(playlist.name);
-        if (playlist.name === "Liked Songs Copy") {
-            return playlist.id;
-        }
-    }
-
-    return "err";
 }
 
 // Get playlist, songname, artist, album name for all playlists
@@ -149,9 +155,10 @@ async function getAllPlaylistSongs() {
                 
                 const trackName = track.track.name;
                 const albumName = track.track.album.name;
+                const addedAtTime = track.added_at;
 
-                console.log(playlistName, artistName, trackName, albumName);
-                data.push([playlistName, artistName, trackName, albumName]);
+                console.log(playlistName, artistName, trackName, albumName, addedAtTime);
+                data.push([playlistName, artistName, trackName, albumName, addedAtTime]);
             }
 
             offset += 100;
