@@ -128,9 +128,16 @@ async function getAllPlaylistSongs() {
         let offset = 0;
         let limit = 100;
         const playlist = retrievedPlaylists.items[index];
-        const tracks = await getPlaylistTracks(playlist.id, offset);
+        let total = -1;
 
-        const total = tracks.total;
+        try {
+            const tracks = await getPlaylistTracks(playlist.id, offset);
+            total = tracks.total;
+        } 
+        catch (err) {
+            console.log("Found invalid playlist, skipping to the next playlist");
+            continue; // Invalid playlist, skip to the next playlist
+        }
 
         console.log("Starting ", playlist.name);
 
