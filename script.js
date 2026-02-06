@@ -79,6 +79,75 @@ async function getPlaylistID(name) {
     return "err";
 }
 
+// Record a given batch of tracks into array data, label with the given playlist name
+function recordTracks(tracks, playlistName) {
+    for (let i = 0; i < tracks.total; i++) {
+        const track = tracks.items[i];
+
+        let artistName = "";
+        try {
+            artistName = track.track.artists[0].name;
+        }
+        catch (err) {
+            continue; // Bad track, skip record
+        }
+        
+        const trackName = track.track.name;
+        const albumName = track.track.album.name;
+        const addedAtTime = track.added_at;
+
+        console.log(playlistName, artistName, trackName, albumName, addedAtTime);
+        data.push([playlistName, artistName, trackName, albumName, addedAtTime]);
+    }
+}
+
+// Record a batch of given playlists into array data
+async function recordPlaylists(playlists) {
+    for (let index = 0; index < playlists.total; index++) {
+        let offset = 0;
+        let limit = 100;
+        const playlist = playlists.items[index];
+        let total = -1;
+
+        try {
+            const tracks = await getPlaylistTracks(playlist.id, offset);
+            total = tracks.total;
+        } 
+        catch (err) {
+            console.log("Found invalid playlist, skipping to the next playlist");
+            continue; // Invalid playlist, skip to the next playlist
+        }
+
+        console.log("Starting ", playlist.name);
+
+        while (offset < total) {
+            if (limit < 100) {
+                console.log("Final batch for ", playlist.name);
+            }
+
+            const tracks = await getPlaylistTracks(playlist.id, offset, limit);
+
+            recordTracks(tracks, playlist.name);
+
+            offset += 100;
+
+            if (total - offset < 100) {
+                limit = total - offset;
+            }
+        }
+    }
+}
+
+function writeToCSV(filename) {
+    stringify(data, { header: true, columns: columns }, (err, output) => {
+        if (err) throw err;
+        fs.writeFile(filename, output, (err) => {
+            if (err) throw err;
+            console.log(`${filename} saved`);
+        });
+    });
+}
+
 // Save songs from a single playlist identified by name
 async function getPlaylistSongsByName(name) {
     const filename = 'songs.csv'; // filename for saved songs
@@ -105,31 +174,10 @@ async function getPlaylistSongsByName(name) {
 
     // api only allows 100 records to be extracted at a time
     while (offset < total)
-    {
-        if (limit < 100) {
-            console.log("Final batch for liked songs");
-        }
-        
+    {   
         const tracks = await getPlaylistTracks(playlistID, offset, limit);
 
-        for (let i = 0; i < tracks.total; i++) {
-            const track = tracks.items[i];
-
-            let artistName = "";
-            try {
-                artistName = track.track.artists[0].name;
-            }
-            catch (err) {
-                continue; // Bad track, skip record
-            }
-            
-            const trackName = track.track.name;
-            const albumName = track.track.album.name;
-            const addedAtTime = track.added_at;
-
-            console.log(name, artistName, trackName, albumName, addedAtTime);
-            data.push([name, artistName, trackName, albumName, addedAtTime]);
-        }
+        recordTracks(tracks, name);
 
         offset += 100;
 
@@ -139,86 +187,31 @@ async function getPlaylistSongsByName(name) {
         }
     }
 
-    // Write data to csv file
-    stringify(data, { header: true, columns: columns }, (err, output) => {
-        if (err) throw err;
-        fs.writeFile(filename, output, (err) => {
-            if (err) throw err;
-            console.log(`songs.csv saved`);
-        });
-    });
+    writeToCSV(filename);
 }
 
 // Get playlist, songname, artist, album name for all playlists
 async function getAllPlaylistSongs() {
+    const filename = "playlist-songs.csv";
     const retrievedPlaylists = await getPlaylists();
+    const total = retrievedPlaylists.total;
+    
+    let limit = 50;
+    let offset = 0;
 
-    // TODO: Make a while loop to handle looping through all the playlists
-    // Can only pull 50 playlists at a time, need to use an offset to get all playlists
+    while (offset < total) {
+        const currentPlaylists = await getPlaylists(offset, limit);
 
-    // Go through all collected playlists
-    for (let index = 0; index < retrievedPlaylists.total; index++) {
-        let offset = 0;
-        let limit = 100;
-        const playlist = retrievedPlaylists.items[index];
-        let total = -1;
+        recordPlaylists(currentPlaylists);
 
-        try {
-            const tracks = await getPlaylistTracks(playlist.id, offset);
-            total = tracks.total;
-        } 
-        catch (err) {
-            console.log("Found invalid playlist, skipping to the next playlist");
-            continue; // Invalid playlist, skip to the next playlist
-        }
+        offset += 50;
 
-        console.log("Starting ", playlist.name);
-
-        while (offset < total) {
-            if (limit < 100) {
-                console.log("Final batch for ", playlist.name);
-            }
-
-            const tracks = await getPlaylistTracks(playlist.id, offset, limit);
-
-            for (let j = 0; j < tracks.total; j++) {
-                const track = tracks.items[j];
-                const playlistName = playlist.name;
-
-                let artistName = "";
-                try {
-                    artistName = track.track.artists[0].name;
-                }
-                catch (err) {
-                    continue; // Bad track, skip record
-                }
-                
-                const trackName = track.track.name;
-                const albumName = track.track.album.name;
-                const addedAtTime = track.added_at;
-
-                console.log(playlistName, artistName, trackName, albumName, addedAtTime);
-                data.push([playlistName, artistName, trackName, albumName, addedAtTime]);
-            }
-
-            offset += 100;
-
-            if (total - offset < 100) {
-                limit = total - offset;
-            }
+        if (total - offset < 50) {
+            limit = total - offset;
         }
     }
 
-    // --- Write data to csv file
-
-    stringify(data, { header: true, columns: columns }, (err, output) => {
-    if (err) throw err;
-    fs.writeFile('playlist-songs.csv', output, (err) => {
-        if (err) throw err;
-        console.log('playlist-songs.csv saved');
-    });
-    });
-
+    writeToCSV(filename);
 }
 
 // --- Driver Code ---
