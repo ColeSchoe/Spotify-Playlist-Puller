@@ -35,9 +35,17 @@ Use the .msi installer, default options should work
 
 ## Convert Your Liked Songs into a Playlist
 
-In the desktop client for Spotify, go to your liked songs  
+### Via the Desktop Client
+
+Go to your liked songs  
 
 Ctrl + A -> right click -> "Add to Playlist" -> create a new playlist called "Liked Songs Copy"
+
+### Via the Web Client
+
+Go to your liked songs
+
+Click the first song -> Go all the way to the bottom of the list -> Ctrl + left click the last song -> "Add to Playlist" -> create a new playlist called "Liked Songs Copy"  
 
 ## How to Use
 
