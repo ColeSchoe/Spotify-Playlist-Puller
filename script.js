@@ -47,6 +47,37 @@ async function getPlaylistTracks(playlistID, offset=0, limit=100){
 
 // ---- Functions handling core logic ----
 
+// WORK IN PROGRESS - Find a playlist ID by name
+async function getPlaylistID(name) {
+    let offset = 0;
+    let limit = 50;
+
+    const retrievedPlaylists = await getPlaylists();
+    const total = retrievedPlaylists.total;
+
+    console.log(retrievedPlaylists.total);
+
+    // Can only fetch 50 playlists at a time, need to use an offset when pulling playlists
+    // Need to actually call getPlaylists in this loop using the offset and limit values as url params
+    while (offset < total) {
+        for (let i = 0; i < retrievedPlaylists.total; i++) {
+            const playlist = retrievedPlaylists.items[i];
+            console.log(playlist.name);
+            if (playlist.name === name) {
+                return playlist.id;
+            }
+        }
+
+        offset += 50;
+
+        if (total - offset < 50) {
+            limit = total - offset;
+        }
+    }
+
+    return "err";
+}
+
 // Given all playlists find and return the liked songs playlist, linear search
 async function getLikedSongsPlaylist() {
     const retrievedPlaylists = await getPlaylists();
@@ -59,6 +90,69 @@ async function getLikedSongsPlaylist() {
     }
 
     return "err";
+}
+
+// WORK IN PROGRESS - Save songs from a single named playlist
+async function getPlaylistSongsByName(name) {
+    const filename = 'songs.csv'; // filename for saved songs
+    let offset = 0;
+    let limit = 100;
+    const playlistID = await getPlaylistID(name);
+
+    if (playlistID === "err") {
+        console.log("Invalid playlist name! Stopping program.");
+        return;
+    }
+    
+    const songs = await getPlaylistTracks(playlistID, offset);
+    const total = songs.total;
+    console.log(songs);
+    console.log("Total: ", total);
+
+    // api only allows 100 records to be extracted at a time
+    while (offset < total)
+    {
+        if (limit < 100) {
+            console.log("Final batch for liked songs");
+        }
+        
+        const tracks = await getPlaylistTracks(playlistID, offset, limit);
+
+        for (let i = 0; i < tracks.total; i++) {
+            const track = tracks.items[i];
+
+            let artistName = "";
+            try {
+                artistName = track.track.artists[0].name;
+            }
+            catch (err) {
+                continue; // Bad track, skip record
+            }
+            
+            const trackName = track.track.name;
+            const albumName = track.track.album.name;
+            const addedAtTime = track.added_at;
+
+            console.log(name, artistName, trackName, albumName, addedAtTime);
+            data.push([name, artistName, trackName, albumName, addedAtTime]);
+        }
+
+        offset += 100;
+
+        // Adjust limit for final batch of tracks
+        if (total - offset < 100) {
+            limit = total - offset;
+        }
+    }
+
+    // Write data to csv file
+    stringify(data, { header: true, columns: columns }, (err, output) => {
+        if (err) throw err;
+        fs.writeFile(filename, output, (err) => {
+            if (err) throw err;
+            console.log(`songs.csv saved.`);
+        });
+    });
 }
 
 // Save liked songs
@@ -202,6 +296,11 @@ if (argument == "liked"){
 else if (argument == "all"){
     console.log("Gathering all songs for all playlists");
     await getAllPlaylistSongs();
+}
+
+else if (typeof argument === "string") {
+    console.log(`Gathering songs from playlist: ${argument}`);
+    await getPlaylistSongsByName(argument);
 }
 
 else {
