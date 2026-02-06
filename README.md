@@ -1,7 +1,7 @@
 # Spotify Playlist Puller
 
-## 1.2 Release Notice
-Version 1.2 of the Spotify Playlist Puller is fully up and running! Now you can choose to only gather your liked songs copy playlist or gather all songs from each playlist. The tool now gathers each of the following datapoints:  
+## 1.3 Release Notice
+Version 1.3 of the Spotify Playlist Puller is fully up and running! Now you can choose to only gather your liked songs copy playlist, gather all songs from each playlist, or gather all songs from a single playlist. The tool gathers each of the following datapoints from each song:  
 
 <ul>
 <li>Playlist Name</li>
@@ -12,10 +12,18 @@ Version 1.2 of the Spotify Playlist Puller is fully up and running! Now you can 
 </ul>
 
 To gather all songs run the script with the "all" argument like so:  
-```node script.js all```
+```node script.js all```  
+&emsp;- Saves as "playlist-songs.csv"
 
 To gather only songs from the "Liked Songs Copy" playlist, use "liked" as the argument to script.js like so:  
-```node script.js liked```
+```node script.js liked```  
+&emsp;- Saves as "songs.csv"  
+
+To gather songs from a single playlist, use the name of the playlist as a string as an argument to script.js like so:  
+```node script.js "Rock Favorites"```  
+&emsp;- Saves as "songs.csv"  
+
+NOTE: When running the script, new versions of the same filename will overwrite the old file (eg. running the script for one named playlist will produce a "songs.csv" file, and then running it again will overwrite the existing songs.csv file). Be sure to either rename your file or move it to another directory to prevent accidental overwriting.
 
 ## Required Software
 
@@ -75,6 +83,8 @@ Run the following command to install dependencies:
 
 Run the following command with the applicable subcommand to run the script:  
 ```node script.js all``` - (To gather all songs from all playlists)  
-```node script.js liked``` - (To gather all liked songs from copy playlist "Liked Songs Copy")
+```node script.js liked``` - (To gather all liked songs from copy playlist "Liked Songs Copy")  
+```node script.js "<playlist name here>"``` - (To gather all songs from a single playlist identified by name)  
+&emsp;Example: ```node script.js "Rock Favorites"```  
 
-Check the project directory for a CSV file containing your collected song info, it should be called "liked-songs.csv" when gathering "Liked Songs Copy" and "playlist-songs.csv" when gathering all songs from all playlists
+Check the project directory for a CSV file containing your collected song info, it should be called "songs.csv" when gathering "Liked Songs Copy" or any other playlist by name and "playlist-songs.csv" when gathering all songs from all playlists
