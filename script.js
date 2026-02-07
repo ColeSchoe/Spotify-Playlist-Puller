@@ -173,8 +173,7 @@ async function getPlaylistSongsByName(name) {
     console.log("Total songs: ", total);
 
     // api only allows 100 records to be extracted at a time
-    while (offset < total)
-    {   
+    while (offset < total) {   
         const tracks = await getPlaylistTracks(playlistID, offset, limit);
 
         recordTracks(tracks, name);
@@ -202,7 +201,7 @@ async function getAllPlaylistSongs() {
     while (offset < total) {
         const currentPlaylists = await getPlaylists(offset, limit);
 
-        recordPlaylists(currentPlaylists);
+        await recordPlaylists(currentPlaylists);
 
         offset += 50;
 
