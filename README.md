@@ -53,7 +53,7 @@ Ctrl + A -> right click -> "Add to Playlist" -> create a new playlist called "Li
 
 Go to your liked songs
 
-Click the first song -> Go all the way to the bottom of the list -> Ctrl + left click the last song -> "Add to Playlist" -> create a new playlist called "Liked Songs Copy"  
+Click the first song -> Go all the way to the bottom of the list -> Shift + left click the last song -> "Add to Playlist" -> create a new playlist called "Liked Songs Copy"  
 
 ## How to Use
 
